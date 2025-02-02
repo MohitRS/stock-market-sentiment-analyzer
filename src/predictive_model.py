@@ -13,7 +13,7 @@ from sklearn.metrics import mean_absolute_error, r2_score
 os.makedirs("models", exist_ok=True)
 
 # Load merged data
-data_path = "data/merged_data.csv"
+data_path = "data/merged_data_fixed.csv"
 if not os.path.exists(data_path):
     print(f"❌ ERROR: '{data_path}' not found! Please run data processing first.")
     exit()
@@ -24,21 +24,26 @@ data = pd.read_csv(data_path)
 data["Date"] = pd.to_datetime(data["Date"])
 data = data.sort_values("Date")
 
+# Check if 'Sentiment_Score' exists (Fixes previous issue)
+if "Sentiment_Score" not in data.columns:
+    print("❌ ERROR: 'Sentiment_Score' column is missing. Make sure sentiment data is correctly processed.")
+    exit()
+
 # Feature Engineering
 data["Close_lag1"] = data["Close"].shift(1)  # Previous day's Close
 data["Daily_Return"] = data["Close"].pct_change()  # % Price change
-data["Sentiment_Close_Interaction"] = data["rolling_sentiment"] * data["Close"]
+data["Sentiment_Close_Interaction"] = data["Sentiment_Score"] * data["Close"]
 
 # Drop NaN values (important for lagged features)
 data.dropna(inplace=True)
 
 # Ensure sufficient data is available
-if len(data) < 10:
+if len(data) < 20:
     print(f"❌ ERROR: Not enough data points ({len(data)} rows). Consider increasing dataset size.")
     exit()
 
 # Define features (X) and target (y)
-X = data[["rolling_sentiment", "Close_lag1", "Daily_Return", "Sentiment_Close_Interaction"]]
+X = data[["Sentiment_Score", "Close_lag1", "Daily_Return", "Sentiment_Close_Interaction"]]
 y = data["Close"]
 
 # Train-test split (80-20 split)

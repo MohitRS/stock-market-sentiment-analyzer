@@ -1,21 +1,19 @@
 import pandas as pd
 
 # Load datasets
-etf_data = pd.read_csv("data/SPY_historical.csv")
-sentiment_data = pd.read_csv("data/twitter_sentiment_analyzed.csv")
+prices = pd.read_csv("data/yfinance_data.csv")
+sentiment = pd.read_csv("data/processed_sentiment.csv")
 
 # Convert Date columns to datetime format
-etf_data["Date"] = pd.to_datetime(etf_data["Date"])
-sentiment_data["Date"] = pd.to_datetime(sentiment_data["Date"])
+prices["Date"] = pd.to_datetime(prices["Date"])
+sentiment["Date"] = pd.to_datetime(sentiment["Date"])
 
-# Sort both datasets by Date
-etf_data = etf_data.sort_values("Date")
-sentiment_data = sentiment_data.sort_values("Date")
+# Merge on Date
+merged = pd.merge(prices, sentiment, on="Date", how="left")
 
-# Merge on Date (inner join)
-merged_data = pd.merge(etf_data, sentiment_data, on="Date", how="inner")
+# Fill missing sentiment values with 0 (neutral)
+merged["Sentiment_Score"].fillna(0, inplace=True)
 
-# Save merged dataset
-merged_data.to_csv("data/merged_data.csv", index=False)
-
-print(f"✅ Merged dataset created: {len(merged_data)} rows saved to 'data/merged_data.csv'.")
+# Save merged data
+merged.to_csv("data/merged_data.csv", index=False)
+print("✅ Merged dataset saved as data/merged_data.csv")
