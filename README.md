@@ -85,8 +85,8 @@ This model was chosen for its robustness against outliers and overfitting.
 
 ## 💡 Contributors & Credits
 👤 **Mohit Rudraraju Suresh**  
-📬 [LinkedIn](https://www.linkedin.com/in/mohitrudraraju)  
-📧 Email: your_email@example.com  
+📬 [LinkedIn](https://www.linkedin.com/in/mohitrs)  
+📧 Email: mohitrs53@gmail.com  
 
 **📌 Star the repo if you find it useful! ⭐**
 
